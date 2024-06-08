@@ -30,10 +30,10 @@ double output(const std::vector<double>& inputs, const std::vector<Neuron>& netw
     return sum;
 }
 
-void save_network(const std::vector<Neuron>& network, const std::string& filename) {
+void save_network(double w1, double w2, double b, const std::string& filename) {
     std::ofstream file(filename, std::ios::binary);
     if (file.is_open()) {
-        file.write(reinterpret_cast<const char*>(&network[0]), sizeof(Neuron) * network.size());
+        file << w1 << std::endl << w2 << std::endl << b;
         file.close();
     }
     else {
@@ -41,14 +41,22 @@ void save_network(const std::vector<Neuron>& network, const std::string& filenam
     }
 }
 
-void load_network(std::vector<Neuron>& network, const std::string& filename) {
+int load_network(double w1, double w2, double b, const std::string& filename) {
     std::ifstream file(filename, std::ios::binary);
+    std::string line;
     if (file.is_open()) {
-        file.read(reinterpret_cast<char*>(&network[0]), sizeof(Neuron) * network.size());
+        std::getline(file, line);
+        w1 = stod(line);
+        std::getline(file, line);
+        w2 = stod(line);
+        std::getline(file, line);
+        b = stod(line);
         file.close();
+        return w1, w2, b;
     }
     else {
         std::cout << "Unable to open file: " << filename << std::endl;
+        return 38.9831, -13.1807, -0.404941;
     }
 }
 
@@ -58,6 +66,7 @@ int main() {
     double weights2 = -13.1807;
     std::string line;
     double bias = -0.404941;
+    weights1, weights2, bias = load_network(weights1, weights2, bias, "network.txt");
     std::vector<double> weights = { weights1, weights2 };
     std::vector<double> inputs = { 75, 180 };
     double weight = 75;
@@ -105,7 +114,7 @@ int main() {
         network[0].weights[1] -= learning_rate * grad_w1;
         network[0].bias -= learning_rate * grad_b;
 
-        save_network(network, "network.bin");
+        save_network(weights[0], weights[1], bias, "network.txt");
     }
     return 0;
 }
