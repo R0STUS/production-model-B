@@ -92,11 +92,18 @@ int main() {
 
         double out = output(inputs, network);
         double output = sigmoid(out);
+        output = long(output);
 
         std::cout << "The person is " << output << " (0 - not an adult, 1 - adult)" << std::endl;
 
         std::cout << "The person is adult? (0 or 1):  ";
         std::cin >> target;
+        if (target > 1) {
+            target = 1;
+        }
+        else if (target < 0) {
+            target = 0;
+        }
         double diff = output - target;
 
         std::cout << "Rating:  ";
