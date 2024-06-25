@@ -30,6 +30,17 @@ double output(const std::vector<double>& inputs, const std::vector<Neuron>& netw
     return sum;
 }
 
+std::vector<Neuron> train(std::vector<Neuron> network, double learning_rate, double diff, std::vector<double> inputs) {
+    double grad_w0 = diff * inputs[0];
+    double grad_w1 = diff * inputs[1];
+    double grad_b = diff;
+
+    network[0].weights[0] -= learning_rate * grad_w0;
+    network[0].weights[1] -= learning_rate * grad_w1;
+    network[0].bias -= learning_rate * grad_b;
+    return network;
+}
+
 void save_network(double w1, double w2, double b, const std::string& filename) {
     std::ofstream file(filename, std::ios::binary);
     if (file.is_open()) {
@@ -61,6 +72,7 @@ int load_network(double w1, double w2, double b, const std::string& filename) {
 }
 
 int main() {
+    std::cout << "     Linux is the best!\n\n";
     double learning_rate = 0.1;
     double weights1 = 38.9831;
     double weights2 = -13.1807;
@@ -113,13 +125,7 @@ int main() {
         else
             rating = 0;
         std::cout << rating;
-        double grad_w0 = (output - target) * inputs[0];
-        double grad_w1 = (output - target) * inputs[1];
-        double grad_b = output - target;
-
-        network[0].weights[0] -= learning_rate * grad_w0;
-        network[0].weights[1] -= learning_rate * grad_w1;
-        network[0].bias -= learning_rate * grad_b;
+        network = train(network, learning_rate, diff, inputs);
 
         save_network(weights[0], weights[1], bias, "network.txt");
     }
